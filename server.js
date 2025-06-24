@@ -1,23 +1,21 @@
-require("dotenv").config();
-const express = require("express");
-const cors = require("cors");
-const apiRoutes = require("./routes/api");
-
+require('dotenv').config();
+const express = require('express');
 const app = express();
+const apiRoutes = require('./routes/api');
 
-app.use(cors());
+// Middleware (if any)
 app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
 
-app.use("/api", apiRoutes);
+// API Routes
+app.use('/api', apiRoutes);
 
-app.get("/", (req, res) => {
-  res.send("Metric-Imperial Converter API");
-});
+// Export the app for testing
+module.exports = app;
 
-const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => {
-  console.log(`Server running on port ${PORT}`);
-});
-
-module.exports = app; // for testing
+// Start the server ONLY if NOT in test environment
+if (process.env.NODE_ENV !== 'test') {
+  const PORT = process.env.PORT || 3000;
+  app.listen(PORT, () => {
+    console.log(`Server listening on port ${PORT}`);
+  });
+}
