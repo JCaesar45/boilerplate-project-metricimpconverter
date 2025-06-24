@@ -1,24 +1,22 @@
-const express = require("express");
+const express = require('express');
 const router = express.Router();
-const ConvertHandler = require("../controllers/convertHandler");
+const ConvertHandler = require('../controllers/convertHandler.js');
 const convertHandler = new ConvertHandler();
 
-router.get("/convert", (req, res) => {
+router.get('/api/convert', (req, res) => {
   const input = req.query.input;
-  if (!input) return res.json({ error: "no input" });
+  if (!input) return res.status(400).send('No input provided');
 
   const initNum = convertHandler.getNum(input);
   const initUnit = convertHandler.getUnit(input);
 
-  if (initNum === "invalid number" && initUnit === "invalid unit") {
-    return res.json({ error: "invalid number and unit" });
-  }
-  if (initNum === "invalid number") {
-    return res.json({ error: "invalid number" });
-  }
-  if (initUnit === "invalid unit") {
-    return res.json({ error: "invalid unit" });
-  }
+  // Check errors
+  const numError = (initNum === 'invalid number');
+  const unitError = (initUnit === 'invalid unit');
+
+  if (numError && unitError) return res.send('invalid number and unit');
+  if (numError) return res.send('invalid number');
+  if (unitError) return res.send('invalid unit');
 
   const returnNum = convertHandler.convert(initNum, initUnit);
   const returnUnit = convertHandler.getReturnUnit(initUnit);
@@ -29,7 +27,7 @@ router.get("/convert", (req, res) => {
     initUnit,
     returnNum,
     returnUnit,
-    string,
+    string
   });
 });
 
